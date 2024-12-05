@@ -11,19 +11,35 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                // Add your build commands here
+                // You can add build commands here, if any (e.g., minifying CSS/JS, etc.)
             }
         }
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test commands here
+                // You can add your test commands here, if any (e.g., running unit tests)
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
-                // Add your deployment commands here
+
+                // Copy the files to the web directory (assuming the files are in the repository)
+                sh '''
+                    sudo rm -rf /var/www/Intapp/*  # Clear existing files
+                    sudo cp -r * /var/www/Intapp/  # Copy new files to /var/www/Intapp/
+                '''
+                
+                // Ensure proper permissions (replace "www-data" with your NGINX user if needed)
+                sh '''
+                    sudo chown -R www-data:www-data /var/www/Intapp/
+                    sudo chmod -R 755 /var/www/Intapp/
+                '''
+                
+                // Reload NGINX to reflect changes
+                sh '''
+                    sudo nginx -s reload
+                '''
             }
         }
     }
