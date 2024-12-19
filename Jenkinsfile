@@ -14,6 +14,23 @@ pipeline {
                 // You can add build commands here, if any (e.g., minifying CSS/JS, etc.)
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    // Run SonarQube scan
+                    withSonarQubeEnv('SonarQube') { 
+                        sh '''
+                            # Run SonarQube analysis
+                            sonar-scanner \
+                              -Dsonar.projectKey=your_project_key \
+                              -Dsonar.sources=. \
+                              -Dsonar.host.url=http://your_sonarqube_url \
+                              -Dsonar.login=your_sonarqube_token
+                        '''
+                    }
+                }
+            }
+        }
         stage('Test') {
             steps {
                 echo 'Running tests...'
